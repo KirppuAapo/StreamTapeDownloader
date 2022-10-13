@@ -7,18 +7,22 @@ def main(name :str, fileList :list):
         url = file
         r = reqs.get(url)
         rstr = str(r.content)
-        rstr = rstr[rstr.find("\\'ideoolink\\'"):rstr.find("\\'robotlink\\'")]
-        rstr = rstr[rstr.find('"')+ 1:]
-        link = rstr[:rstr.find('"')]
-        link = "https:/"+link+rstr[rstr.find("xcdb")+4:rstr.find(".substring")-3]
-        #r = reqs.get(link)
+   
+        rstr = rstr[rstr.find('/streamta.pe/'):]
+        link = rstr[:rstr.find('<')]
+        rstr = rstr[rstr.find("xcdd"):]
+        rstr = rstr[:rstr.find("\\")]
+        rstr = rstr[-2:]
+        link = 'https:/' + link[:-2] + rstr + '&stream=1'
         checkFile(f"./videos/{name}/{name}-{'0'*(4-(len(str(i+1))))}{i+1}.mp4")
         download(link, str(i+1), f"./videos/{name}/{name}-{'0'*(4-(len(str(i+1))))}{i+1}.mp4")
         sys.stdout.write(f"\nFile {i+1} download complete\n")
     print("All downloads are complete")
 
+
 def download(url, fileIndex, fileName):
     with open(fileName, "wb") as w:
+        print('File opened')
         r = reqs.get(url, stream=True)
         total = int(r.headers.get("content-length"))
         downloaded = 0
@@ -31,7 +35,7 @@ def download(url, fileIndex, fileName):
 
 def checkFolder(name :str):
     try:
-        os.mkdir(f"./videos/{name}")
+        os.makedirs(f"./videos/{name}")
     except:
         pass
 
@@ -43,6 +47,8 @@ def checkFile(name :str):
 with open ("STToDownload.txt", "r") as t:
     t = t.read().split("\n")
     name = t[0]
+    if t[-1] == '':
+        t.pop(-1)
     t.pop(0)
     print(name)
     print(f"Episodes {len(t)}")
