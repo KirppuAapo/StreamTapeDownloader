@@ -2,9 +2,15 @@ import requests as reqs
 import os
 import sys
 
-def main(name :str, fileList :list):
+def main(fileList :list):
+
     for i, file in enumerate(fileList):
         url = file
+        name = url.split('/')
+        if name[-1] == '':
+            name.pop(-1)
+        name = name[-1]
+
         r = reqs.get(url)
         rstr = str(r.content)
    
@@ -14,8 +20,8 @@ def main(name :str, fileList :list):
         rstr = rstr[:rstr.find("\\")]
         rstr = rstr[-2:]
         link = 'https:/' + link[:-2] + rstr + '&stream=1'
-        checkFile(f"./videos/{name}/{name}-{'0'*(4-(len(str(i+1))))}{i+1}.mp4")
-        download(link, str(i+1), f"./videos/{name}/{name}-{'0'*(4-(len(str(i+1))))}{i+1}.mp4")
+        checkFile(f"./videos/{name}.mp4")
+        download(link, str(i+1), f"./videos/{name}.mp4")
         sys.stdout.write(f"\nFile {i+1} download complete\n")
     print("All downloads are complete")
 
@@ -49,9 +55,6 @@ with open ("STToDownload.txt", "r") as t:
     name = t[0]
     if t[-1] == '':
         t.pop(-1)
-    t.pop(0)
-    print(name)
-    print(f"Episodes {len(t)}")
     print(t)
-    checkFolder(name)
-    main(name, t)
+    checkFolder('./videos/')
+    main(t)
